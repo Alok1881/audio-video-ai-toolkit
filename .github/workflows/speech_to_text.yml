@@ -1,5 +1,5 @@
-name: Whisper Upload Transcription
-run-name: Transcribe ${{ inputs.audio_file }} (${{ inputs.language }})
+name: Audio file to text converter
+run-name: Transcribe ${{ inputs.audio_file || 'sample-0.mp3' }} (${{ inputs.language || 'en' }})
 
 on:
   workflow_dispatch:
@@ -57,11 +57,11 @@ jobs:
 
       - name: Validate input file exists
         run: |
-          test -f "${{ inputs.audio_file }}" || { echo "Audio file not found: ${{ inputs.audio_file }}"; exit 1; }
+          test -f "${{ inputs.audio_file || 'sample-0.mp3' }}" || { echo "Audio file not found: ${{ inputs.audio_file || 'sample-0.mp3' }}"; exit 1; }
 
       - name: Run transcription
         run: |
-          python audio_to_text.py "${{ inputs.audio_file }}" -o transcript.txt -m "${{ inputs.model }}" -l "${{ inputs.language }}"
+          python audio_to_text.py "${{ inputs.audio_file || 'sample-0.mp3' }}" -o transcript.txt -m "${{ inputs.model || 'small' }}" -l "${{ inputs.language || 'en' }}"
 
       - name: Upload transcript artifact
         uses: actions/upload-artifact@v4
