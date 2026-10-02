@@ -1,4 +1,4 @@
-# Whisper Audio Transcription
+# AI Audio Transcription
 
 This project uses OpenAI Whisper to transcribe an audio file into text.
 
