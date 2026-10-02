@@ -1,0 +1,61 @@
+name: Whisper Docker Transcription
+run-name: Docker transcribe ${{ inputs.audio_file || 'sample-0.mp3' }} (${{ inputs.language || 'en' }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      audio_file:
+        type: string
+        description: 'Audio file path in the repo (for example: sample-0.mp3)'
+        required: true
+        default: sample-0.mp3
+      language:
+        type: choice
+        description: 'Spoken language in the audio'
+        required: true
+        default: en
+        options:
+          - en
+          - fr
+          - es
+          - de
+          - hi
+      model:
+        type: choice
+        description: 'Whisper model size'
+        required: true
+        default: small
+        options:
+          - tiny
+          - base
+          - small
+          - medium
+          - large
+  push:
+    branches:
+      - main
+
+jobs:
+  docker-transcribe:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t whisper-app .
+
+      - name: Validate input file exists
+        run: |
+          test -f "${{ inputs.audio_file || 'sample-0.mp3' }}" || { echo "Audio file not found: ${{ inputs.audio_file || 'sample-0.mp3' }}"; exit 1; }
+
+      - name: Run transcription in Docker
+        run: |
+          docker run --rm -v "${{ github.workspace }}:/app" whisper-app "${{ inputs.audio_file || 'sample-0.mp3' }}" -o transcript.txt -m "${{ inputs.model || 'small' }}" -l "${{ inputs.language || 'en' }}"
+
+      - name: Upload transcript artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: transcript
+          path: transcript.txt
