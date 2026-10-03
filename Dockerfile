@@ -12,4 +12,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy app code
 COPY . .
 
-ENTRYPOINT ["python", "audio_to_text.py"]
+CMD ["sh", "-c", "exec gunicorn --workers 1 --timeout 1800 --bind 0.0.0.0:${PORT:-10000} ui_interface:app"]

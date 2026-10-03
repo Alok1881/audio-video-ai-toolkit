@@ -52,7 +52,7 @@ jobs:
 
       - name: Run transcription in Docker
         run: |
-          docker run --rm -v "${{ github.workspace }}:/app" whisper-app "${{ inputs.audio_file || 'sample-0.mp3' }}" -o transcript.txt -m "${{ inputs.model || 'small' }}" -l "${{ inputs.language || 'en' }}"
+          docker run --rm --entrypoint python -v "${{ github.workspace }}:/app" whisper-app audio_to_text.py "${{ inputs.audio_file || 'sample-0.mp3' }}" -o transcript.txt -m "${{ inputs.model || 'small' }}" -l "${{ inputs.language || 'en' }}"
 
       - name: Upload transcript artifact
         uses: actions/upload-artifact@v4

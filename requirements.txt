@@ -1,3 +1,5 @@
 openai-whisper
+flask
+gunicorn
 numpy
 ffmpeg-python
